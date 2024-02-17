@@ -1,3 +1,4 @@
+mod color;
 mod functions;
 
 use serde::{Serialize, Deserialize};
@@ -43,14 +44,6 @@ struct ColorScheme {
 
     /// Templates for files to generate
     templates: Vec<Template>
-}
-
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
-struct Color {
-    r: u8,
-    g: u8,
-    b: u8,
-    a: Option<u8>,
 }
 
 fn read_color_scheme(path: &str) -> Result<ColorScheme> {

@@ -5,8 +5,10 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.79"
-clap = "4.5.1"
+clap = { version = "4.5.1", features = ["derive"] }
 minijinja = { version = "1.0.12", features = ["loader"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9"
+base64 = "0.21.7"
+regex = "1.10.3"
 

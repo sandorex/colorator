@@ -5,7 +5,7 @@ use clap::Parser;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
-    /// If enabled then error out if undefined variables are used in templates
+    /// Treat undefined variables as errors
     #[arg(short, long)]
     pub strict: bool,
 

@@ -17,6 +17,9 @@ fn main() -> Result<()> {
     let mut jinja_env = Environment::new();
     functions::load_functions(&mut jinja_env);
 
+    jinja_env.add_global("AA", 4.5f64);
+    jinja_env.add_global("AAA", 7.0f64);
+
     if args.strict {
         jinja_env.set_undefined_behavior(minijinja::UndefinedBehavior::Strict);
     }
@@ -24,6 +27,7 @@ fn main() -> Result<()> {
     let mut ctx = HashMap::<String, Value>::new();
 
     if args.info {
+        // TODO
         return Ok(());
     }
 
@@ -45,7 +49,9 @@ fn main() -> Result<()> {
         }
     }
 
+    // TODO parse args passed
     // TODO search the file for %~%BASE64%~% here and use that instead of file itself if it exists
+    // TODO ability to extract template from a file with marker
 
     let file_contents = fs::read_to_string(&args.template)
         .with_context(|| format!("could not read file '{}'", &args.template))?;
@@ -59,6 +65,8 @@ fn main() -> Result<()> {
         todo!();
     } else {
         template.render_to_write(&ctx, &mut stdout())?;
+        // add a newline just in case
+        println!();
     }
 
     Ok(())

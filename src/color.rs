@@ -1,16 +1,8 @@
 //! Module contains color struct
 
-use std::{fmt, num::ParseIntError, str::FromStr};
+use std::{fmt, num::ParseIntError};
 use minijinja::{self, value::{from_args, Object, ObjectKind, StructObject}, Value, Error, ErrorKind};
 
-// TODO maybe make Color an enum then implement diferent types
-#[derive(Debug, PartialEq, Clone)]
-pub enum ColorS {
-    RGB(u8, u8, u8),
-    RGBA(u8, u8, u8, u8),
-    HSL(u8, u8, u8),
-    HSLA(u8, u8, u8, u8),
-}
 // implement RGB to RGBA and HSL to HSLA .with_alpha(255)
 
 #[derive(Debug, PartialEq, Clone)]
@@ -45,7 +37,7 @@ impl Color {
         ) * a
     }
 
-    pub fn contrast_with(&self, color: &Self) -> f64 {
+    pub fn contrast(&self, color: &Self) -> f64 {
         let lum1 = self.get_luminance();
         let lum2 = color.get_luminance();
 
@@ -93,8 +85,8 @@ impl TryFrom<&str> for Color {
 impl fmt::Display for Color {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.a {
-            Some(alpha) => write!(f, "{:02x}{:02x}{:02x}{:02x}", self.r, self.g, self.b, alpha),
-            None => write!(f, "{:02x}{:02x}{:02x}", self.r, self.g, self.b),
+            Some(alpha) => write!(f, "{:02X}{:02X}{:02X}{:02X}", self.r, self.g, self.b, alpha),
+            None => write!(f, "{:02X}{:02X}{:02X}", self.r, self.g, self.b),
         }
     }
 }
@@ -129,10 +121,10 @@ mod tests {
     #[test]
     fn color_contrast() {
         // ensure the order does not matter
-        assert_eq!(COLOR1.contrast_with(&COLOR2), COLOR2.contrast_with(&COLOR1));
+        assert_eq!(COLOR1.contrast(&COLOR2), COLOR2.contrast(&COLOR1));
 
         // contrast is working
-        assert_eq!(format!("{:.3}", COLOR1.contrast_with(&COLOR2)), "9.329");
+        assert_eq!(format!("{:.3}", COLOR1.contrast(&COLOR2)), "9.329");
     }
 
     #[test]
@@ -164,7 +156,7 @@ impl Object for Color {
                 let (color,): (Value,) = from_args(args)?;
 
                 match color.downcast_object_ref::<Color>() {
-                    Some(x) => Ok(Value::from(self.contrast_with(x))),
+                    Some(x) => Ok(Value::from(self.contrast(x))),
                     None => Err(Error::new(ErrorKind::InvalidOperation, "calling contrast on non-color type")),
                 }
             },

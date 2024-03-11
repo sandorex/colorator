@@ -9,16 +9,16 @@ pub struct Cli {
     #[arg(short, long)]
     pub strict: bool,
 
-    /// Print information about template
+    /// Extract original template from file (will fail if there is nothing)
     #[arg(short, long)]
-    pub info: bool,
+    pub extract: bool,
 
     /// Run following templates on same context before running the main template
-    #[arg(long, conflicts_with = "info")]
+    #[arg(long, conflicts_with = "extract")]
     pub include: Vec<String>,
 
     /// Path to output the file at, if not set then prints to stdout
-    #[arg(short, long, conflicts_with = "info")]
+    #[arg(short, long, conflicts_with = "extract")]
     pub outfile: Option<String>,
 
     /// Path to template file

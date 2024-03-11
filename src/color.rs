@@ -2,8 +2,7 @@
 
 use std::{fmt, num::ParseIntError};
 use minijinja::{self, value::{from_args, Object, ObjectKind, StructObject}, Value, Error, ErrorKind};
-
-// implement RGB to RGBA and HSL to HSLA .with_alpha(255)
+use colored::Colorize;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Color {
@@ -47,6 +46,14 @@ impl Color {
             (lum2 + 0.05) / (lum1 + 0.05)
         }
     }
+
+    pub fn fg(&self, string: &str) -> String {
+        string.truecolor(self.r, self.g, self.b).to_string()
+    }
+
+    pub fn bg(&self, string: &str) -> String {
+        string.on_truecolor(self.r, self.g, self.b).to_string()
+    }
 }
 
 impl TryFrom<&str> for Color {
@@ -79,6 +86,24 @@ impl TryFrom<&str> for Color {
             b: b.try_into().unwrap(),
             a: a.map(|x| x.try_into().unwrap())
         })
+    }
+}
+
+impl TryFrom<minijinja::Value> for Color {
+    type Error = Option<ParseIntError>;
+
+    fn try_from(value: minijinja::Value) -> Result<Self, Self::Error> {
+        // try to cast from color
+        match value.downcast_object_ref::<Color>() {
+            Some(x) => return Ok(x.clone()),
+            None => {},
+        }
+
+        // NOTE: downcast_object_ref<String> does not work
+        match value.as_str() {
+            Some(x) => TryInto::<Color>::try_into(x).map_err(|err| Some(err)),
+            None => Err(None),
+        }
     }
 }
 
